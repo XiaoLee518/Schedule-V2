@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>課程表 · 209</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="課程表">
+<meta name="theme-color" content="#f2f2f7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#f2f2f7;
+  --card:#ffffff;
+  --sep:rgba(0,0,0,0.08);
+  --sep2:rgba(0,0,0,0.04);
+  --text:#1c1c1e;
+  --text2:#3a3a3c;
+  --muted:#8e8e93;
+  --accent:#007aff;
+  --green:#34c759;
+  --orange:#ff9500;
+  --red:#ff3b30;
+  --purple:#af52de;
+  --teal:#00c7be;
+  --yellow:#ffd60a;
+  --tab-h:56px;
+  --header-h:52px;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Noto Sans TC',sans-serif;color:var(--text);}
+#app{height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+.safe-top{height:env(safe-area-inset-top,44px);background:rgba(242,242,247,0.92);}
+.safe-bot{height:env(safe-area-inset-bottom,20px);background:rgba(242,242,247,0.92);}
+
+/* ── HEADER ── */
+header{
+height:var(–header-h);padding:0 16px;
+display:flex;align-items:center;justify-content:space-between;
+background:rgba(242,242,247,0.94);
+backdrop-filter:blur(24px) saturate(200%);
+-webkit-backdrop-filter:blur(24px) saturate(200%);
+border-bottom:0.5px solid rgba(0,0,0,0.12);
+flex-shrink:0;
+}
+.h-title{font-size:22px;font-weight:700;letter-spacing:-0.4px;}
+.h-btn{
+width:32px;height:32px;border-radius:16px;
+background:rgba(0,0,0,0.06);border:none;
+font-size:15px;cursor:pointer;color:var(–accent);
+display:flex;align-items:center;justify-content:center;
+transition:background .15s;
+}
+.h-btn:active{background:rgba(0,0,0,0.14);}
+
+/* ── SEGMENT ── */
+.seg-wrap{
+padding:8px 14px 6px;flex-shrink:0;
+background:rgba(242,242,247,0.94);
+backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+border-bottom:0.5px solid rgba(0,0,0,0.08);
+}
+.seg{display:flex;background:rgba(120,120,128,0.12);border-radius:10px;padding:2px;}
+.seg-btn{
+flex:1;padding:7px 4px;border:none;background:transparent;
+font-family:‘Noto Sans TC’,sans-serif;font-size:13px;
+font-weight:500;color:var(–muted);border-radius:8px;cursor:pointer;transition:all .2s;
+}
+.seg-btn.active{
+background:#fff;color:var(–text);font-weight:600;
+box-shadow:0 1px 4px rgba(0,0,0,0.12);
+}
+
+/* ── VIEWS ── */
+.view{display:none;flex:1;overflow:hidden;flex-direction:column;}
+.view.active{display:flex;}
+
+/* ══════════ WEEKLY ══════════ */
+#weekly-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;}
+.week-grid{
+display:grid;
+grid-template-columns:42px repeat(5,1fr);
+padding:6px 10px 10px;
+gap:3px;
+}
+.wg-head{
+display:flex;flex-direction:column;align-items:center;justify-content:center;
+padding:4px 2px 6px;
+font-size:10.5px;font-weight:600;color:var(–muted);letter-spacing:.8px;
+text-transform:uppercase;
+}
+.wg-today-dot{
+width:24px;height:24px;border-radius:50%;
+background:var(–accent);color:#fff;
+display:flex;align-items:center;justify-content:center;
+font-size:11px;font-weight:700;margin-top:3px;
+}
+.wg-head.today{color:var(–accent);}
+
+.wg-time{
+display:flex;flex-direction:column;align-items:center;justify-content:center;
+padding:1px 0;
+}
+.wg-pn{font-size:13px;font-weight:700;color:var(–text2);}
+.wg-pt{font-size:8px;color:var(–muted);line-height:1.4;text-align:center;margin-top:1px;}
+
+.wg-cell{
+min-height:72px;border-radius:12px;
+display:flex;align-items:center;justify-content:center;
+text-align:center;padding:6px 3px;
+font-size:10.5px;font-weight:500;line-height:1.4;
+position:relative;overflow:hidden;
+box-shadow:0 1px 3px rgba(0,0,0,0.05);
+cursor:pointer;transition:transform .12s;
+}
+.wg-cell:active{transform:scale(0.93);}
+.wg-cell.today{outline:1.5px solid var(–accent);}
+.wg-cell-bar{position:absolute;left:0;top:0;bottom:0;width:3px;}
+.wg-cell span{position:relative;z-index:1;}
+.wg-cell.empty{background:transparent;box-shadow:none;cursor:default;}
+
+.wg-lunch{
+grid-column:1/-1;
+background:rgba(255,149,0,0.06);
+border:1px dashed rgba(255,149,0,0.22);
+border-radius:8px;
+display:flex;align-items:center;justify-content:center;
+padding:5px;margin:1px 0;
+font-size:10.5px;color:var(–orange);font-weight:500;letter-spacing:.2px;
+}
+
+/* ══════════ TODAY ══════════ */
+#today-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 16px 16px;}
+
+.sec-hd{font-size:22px;font-weight:700;letter-spacing:-.3px;padding:16px 0 4px;}
+.sec-sub{font-size:13px;color:var(–muted);margin-bottom:12px;}
+
+.now-card{
+background:#fff;border-radius:18px;padding:16px 16px 14px;
+box-shadow:0 2px 14px rgba(0,0,0,0.07);margin-bottom:10px;
+}
+.now-status{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(–green);margin-bottom:9px;}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(–green);animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.4);}}
+.now-remain{margin-left:auto;font-size:12px;font-weight:400;color:var(–muted);}
+.now-title{font-size:24px;font-weight:700;letter-spacing:-.4px;margin-bottom:9px;}
+.prog-track{height:3.5px;background:var(–sep);border-radius:2px;margin-bottom:11px;}
+.prog-fill{height:100%;border-radius:2px;transition:width .6s ease;}
+.now-meta{display:flex;gap:16px;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:4px;font-size:13px;color:var(–muted);}
+
+.next-card{
+background:#fff;border-radius:14px;padding:11px 14px;
+box-shadow:0 1px 6px rgba(0,0,0,0.05);margin-bottom:16px;
+display:flex;align-items:center;gap:10px;
+}
+.next-lbl{font-size:11px;font-weight:700;color:var(–orange);white-space:nowrap;}
+.next-div{width:1px;height:28px;background:var(–sep);}
+.next-sub{font-size:14px;font-weight:600;}
+.next-t{font-size:11.5px;color:var(–muted);margin-top:2px;}
+
+.no-card{
+background:#fff;border-radius:18px;padding:28px;text-align:center;
+box-shadow:0 1px 6px rgba(0,0,0,0.05);margin-bottom:12px;
+}
+.no-emoji{font-size:44px;margin-bottom:8px;}
+.no-txt{font-size:16px;font-weight:700;}
+.no-sub{font-size:13px;color:var(–muted);margin-top:4px;}
+
+.sch-list{background:var(–sep2);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;gap:.5px;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+.sch-row{background:#fff;padding:11px 14px;display:flex;align-items:center;gap:11px;}
+.sch-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.sch-info{flex:1;min-width:0;}
+.sch-name{font-size:14px;font-weight:500;}
+.sch-name.past{color:var(–muted);}
+.sch-t{font-size:11.5px;color:var(–muted);margin-top:2px;}
+.badge{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;flex-shrink:0;}
+.b-now{background:rgba(52,199,89,.12);color:var(–green);}
+.b-next{background:rgba(255,149,0,.1);color:var(–orange);}
+.b-done{background:rgba(0,0,0,.06);color:var(–muted);}
+
+/* ══════════ TODO ══════════ */
+#todo-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 16px 16px;}
+
+.urgent-banner{
+background:rgba(255,59,48,.07);
+border:1px solid rgba(255,59,48,.18);
+border-radius:14px;padding:11px 14px;margin:14px 0 0;
+}
+.urgent-banner-hd{font-size:12px;font-weight:700;color:var(–red);margin-bottom:5px;}
+.urgent-item-txt{font-size:13px;color:var(–text);margin:2px 0;}
+
+.todo-list{background:var(–sep2);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;gap:.5px;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+.todo-row{background:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.check-btn{
+width:24px;height:24px;border-radius:50%;border:2px solid rgba(0,0,0,.15);
+flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;
+transition:all .2s;
+}
+.check-btn.done{background:var(–green);border-color:var(–green);}
+.check-btn.done::after{content:‘✓’;color:#fff;font-size:13px;font-weight:700;}
+.todo-info{flex:1;min-width:0;}
+.todo-name{font-size:14px;font-weight:500;transition:color .2s;}
+.todo-name.done{color:var(–muted);text-decoration:line-through;}
+.todo-due{font-size:11.5px;color:var(–muted);margin-top:2px;}
+.todo-due.urg{color:var(–red);}
+.urg-icon{font-size:18px;flex-shrink:0;}
+
+.event-list{background:var(–sep2);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;gap:.5px;box-shadow:0 1px 6px rgba(0,0,0,0.04);}
+.ev-row{background:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.ev-bar{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0;min-height:36px;}
+.ev-info{flex:1;min-width:0;}
+.ev-name{font-size:14px;font-weight:500;}
+.ev-date{font-size:11.5px;color:var(–muted);margin-top:2px;}
+.ev-tag{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;}
+.t-hol{background:rgba(255,59,48,.1);color:var(–red);}
+.t-exam{background:rgba(175,82,222,.1);color:var(–purple);}
+.t-ev{background:rgba(0,122,255,.1);color:var(–accent);}
+
+.add-btn{
+width:100%;padding:13px 14px;margin-top:8px;
+background:#fff;border:none;border-radius:14px;
+display:flex;align-items:center;gap:10px;cursor:pointer;
+box-shadow:0 1px 6px rgba(0,0,0,0.05);
+font-family:‘Noto Sans TC’,sans-serif;
+transition:background .12s;
+}
+.add-btn:active{background:#f5f5f5;}
+.add-ic{width:22px;height:22px;border-radius:50%;background:var(–accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;line-height:1;}
+.add-txt{font-size:14px;color:var(–accent);font-weight:500;}
+
+/* ── TAB BAR ── */
+.tab-bar{
+height:var(–tab-h);display:flex;align-items:center;
+background:rgba(242,242,247,0.94);
+backdrop-filter:blur(24px) saturate(200%);
+-webkit-backdrop-filter:blur(24px) saturate(200%);
+border-top:0.5px solid rgba(0,0,0,0.12);
+flex-shrink:0;
+}
+.tab-item{
+flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+gap:2px;border:none;background:transparent;cursor:pointer;padding:5px 0;
+}
+.tab-item:active{opacity:.5;}
+.tab-ic{font-size:22px;transition:transform .2s;}
+.tab-item.active .tab-ic{transform:scale(1.08);}
+.tab-lbl{font-size:10px;font-weight:500;color:var(–muted);}
+.tab-item.active .tab-lbl{color:var(–accent);font-weight:600;}
+
+/* ── MODALS ── */
+.overlay{
+position:fixed;inset:0;z-index:200;
+background:rgba(0,0,0,0.3);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+display:flex;align-items:flex-end;
+opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.overlay.open{opacity:1;pointer-events:all;}
+.sheet{
+width:100%;background:#fff;border-radius:22px 22px 0 0;
+padding:0 0 max(20px,env(safe-area-inset-bottom));
+transform:translateY(100%);
+transition:transform .35s cubic-bezier(.32,.72,0,1);
+max-height:86vh;overflow:auto;
+}
+.overlay.open .sheet{transform:translateY(0);}
+.sh-handle{width:36px;height:4px;background:#e0e0e5;border-radius:2px;margin:10px auto 0;}
+.sh-head{padding:14px 18px 0;display:flex;align-items:center;justify-content:space-between;}
+.sh-title{font-size:17px;font-weight:700;}
+.sh-close{
+width:30px;height:30px;border-radius:50%;background:#f2f2f7;border:none;
+font-size:14px;cursor:pointer;color:var(–muted);
+display:flex;align-items:center;justify-content:center;
+}
+.sh-body{padding:14px 18px;}
+.flbl{font-size:12px;font-weight:600;color:var(–muted);margin-bottom:6px;letter-spacing:.3px;}
+.finput{
+width:100%;padding:12px 13px;border-radius:11px;
+background:#f2f2f7;border:none;
+font-family:‘Noto Sans TC’,sans-serif;font-size:15px;color:var(–text);
+outline:none;transition:box-shadow .2s;margin-bottom:14px;
+-webkit-appearance:none;
+}
+.finput:focus{box-shadow:0 0 0 2px var(–accent);}
+.save-btn{
+width:100%;padding:14px;background:var(–accent);color:#fff;
+border:none;border-radius:13px;font-family:‘Noto Sans TC’,sans-serif;
+font-size:16px;font-weight:700;cursor:pointer;margin-top:2px;
+transition:filter .15s,transform .12s;
+}
+.save-btn:active{filter:brightness(.88);transform:scale(.98);}
+
+.notif-row{
+display:flex;align-items:center;justify-content:space-between;
+background:#f2f2f7;border-radius:13px;padding:14px;margin-bottom:12px;
+}
+.toggle{width:51px;height:31px;border-radius:16px;background:#ddd;cursor:pointer;position:relative;transition:background .25s;flex-shrink:0;}
+.toggle.on{background:var(–green);}
+.toggle::after{content:’’;position:absolute;left:3px;top:3px;width:25px;height:25px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,0.2);transition:transform .25s;}
+.toggle.on::after{transform:translateX(20px);}
+
+.toast{
+position:fixed;z-index:300;
+bottom:calc(var(–tab-h) + env(safe-area-inset-bottom,20px) + 14px);
+left:50%;transform:translateX(-50%) translateY(14px);
+background:rgba(28,28,30,0.88);color:#fff;border-radius:22px;
+padding:10px 18px;font-size:13px;font-weight:500;white-space:nowrap;
+pointer-events:none;opacity:0;transition:opacity .22s,transform .22s;
+backdrop-filter:blur(12px);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+::-webkit-scrollbar{width:0;}
+</style>
+
+</head>
+<body>
+<div id="app">
+  <div class="safe-top"></div>
+
+  <header>
+    <div class="h-title" id="hTitle">課程表</div>
+    <button class="h-btn" id="notifBtn">🔔</button>
+  </header>
+
+  <div class="seg-wrap">
+    <div class="seg">
+      <button class="seg-btn active" data-v="weekly">週課表</button>
+      <button class="seg-btn" data-v="today">今日課程</button>
+      <button class="seg-btn" data-v="todo">待辦 &amp; 行程</button>
+    </div>
+  </div>
+
+  <div id="weekly-view" class="view active">
+    <div id="weekly-scroll"><div class="week-grid" id="weekGrid"></div></div>
+  </div>
+  <div id="today-view" class="view">
+    <div id="today-scroll"><div id="todayContent"></div></div>
+  </div>
+  <div id="todo-view" class="view">
+    <div id="todo-scroll"><div id="todoContent"></div></div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-item active" data-v="weekly"><span class="tab-ic">📅</span><span class="tab-lbl">週課表</span></button>
+    <button class="tab-item" data-v="today"><span class="tab-ic">⏱</span><span class="tab-lbl">今日</span></button>
+    <button class="tab-item" data-v="todo"><span class="tab-ic">📋</span><span class="tab-lbl">待辦</span></button>
+  </div>
+  <div class="safe-bot"></div>
+</div>
+
+<!-- NOTIF MODAL -->
+
+<div class="overlay" id="notifModal">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-head"><div class="sh-title">🔔 課程提醒</div><button class="sh-close" onclick="closeM('notifModal')">✕</button></div>
+    <div class="sh-body">
+      <div class="notif-row">
+        <div>
+          <div style="font-size:15px;font-weight:600;">上課前 5 分鐘提醒</div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px;">需允許通知權限</div>
+        </div>
+        <div class="toggle" id="notifToggle"></div>
+      </div>
+      <div style="background:#f2f2f7;border-radius:12px;padding:13px;font-size:13px;color:var(--muted);line-height:1.75;">
+        💡 <strong style="color:var(--text)">Safari → 分享 ⬆️ → 加入主畫面</strong><br>
+        加到主畫面後，鎖定螢幕也能收到通知。
+      </div>
+      <div style="margin-top:12px;background:#f2f2f7;border-radius:12px;padding:13px;">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;letter-spacing:.3px;">如何上傳到 GitHub Pages</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+          ① 在 github.com 建立新 Repository<br>
+          ② 上傳此 <span style="color:var(--accent);font-weight:600;">index.html</span> 檔案<br>
+          ③ Settings → Pages → main branch → Save<br>
+          ④ 用 Safari 開啟後加入主畫面
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TODO MODAL -->
+
+<div class="overlay" id="todoModal">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-head"><div class="sh-title">新增待辦事項</div><button class="sh-close" onclick="closeM('todoModal')">✕</button></div>
+    <div class="sh-body">
+      <div class="flbl">標題</div>
+      <input class="finput" id="tTitle" placeholder="作業名稱…">
+      <div class="flbl">科目</div>
+      <input class="finput" id="tSubj" placeholder="例：數學A、國文">
+      <div class="flbl">截止日期</div>
+      <input class="finput" id="tDue" type="datetime-local">
+      <button class="save-btn" onclick="saveTodo()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EVENT MODAL -->
+
+<div class="overlay" id="evModal">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="sh-head"><div class="sh-title">新增行程</div><button class="sh-close" onclick="closeM('evModal')">✕</button></div>
+    <div class="sh-body">
+      <div class="flbl">標題</div>
+      <input class="finput" id="eTitle" placeholder="行程名稱…">
+      <div class="flbl">日期</div>
+      <input class="finput" id="eDate" type="date">
+      <div class="flbl">類型</div>
+      <select class="finput" id="eType">
+        <option value="ev">一般行程</option>
+        <option value="holiday">假日</option>
+        <option value="exam">考試</option>
+      </select>
+      <button class="save-btn" onclick="saveEvent()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ DATA ═══
+const PERIODS = [
+  {n:1,s:'08:00',e:'08:50',sh:8, sm:0 },
+  {n:2,s:'09:10',e:'10:00',sh:9, sm:10},
+  {n:3,s:'10:10',e:'11:00',sh:10,sm:10},
+  {n:4,s:'11:10',e:'12:00',sh:11,sm:10},
+  {n:5,s:'13:20',e:'14:10',sh:13,sm:20},
+  {n:6,s:'14:20',e:'15:10',sh:14,sm:20},
+  {n:7,s:'15:20',e:'16:10',sh:15,sm:20},
+  {n:8,s:'16:20',e:'17:10',sh:16,sm:20},
+];
+const CLASSES = [
+  ['生活科技',    '力學二與熱學', '地理',        '國文',       '化學-探究B'],
+  ['生活科技',    '歷史',         '物質構造反應', '英文',       '化學-探究B'],
+  ['數學A',       '英文',         '團體活動時間', '數學A',      '彈性學習'  ],
+  ['數學A',       '英文閱讀寫作', '團體活動時間', '數學A',      '彈性學習'  ],
+  ['英文增廣補強','力學二與熱學', '英語簡報',    '國文',       '體育'      ],
+  ['英文',        '各類文學選讀', '英語簡報',    '物質構造反應','地理'      ],
+  ['國文',        '國文',         '英文',        '體育',       '歷史'      ],
+  ['國文輔導',    '數學輔導',     '英文輔導',    '化學輔導',   '物理輔導'  ],
+];
+const DAY_SHORT=['MON','TUE','WED','THU','FRI'];
+const DOW_ZH=['日','一','二','三','四','五','六'];
+
+function cc(n){
+  if(!n) return{bg:'#f2f2f7',bar:'#e0e0e5',txt:'#c7c7cc'};
+  if(n.includes('國文')&&!n.includes('輔')) return{bg:'rgba(255,214,10,.1)',bar:'#ffd60a',txt:'#9b7c00'};
+  if(n.includes('數學')&&!n.includes('輔')) return{bg:'rgba(0,122,255,.09)',bar:'#007aff',txt:'#0055cc'};
+  if(/英文|英語/.test(n)&&!n.includes('輔')) return{bg:'rgba(52,199,89,.1)',bar:'#34c759',txt:'#1a7a33'};
+  if(/化學|物質|物理/.test(n)) return{bg:'rgba(175,82,222,.1)',bar:'#af52de',txt:'#7a2ab0'};
+  if(/力學|生活科技/.test(n)) return{bg:'rgba(0,199,190,.1)',bar:'#00c7be',txt:'#007a77'};
+  if(/歷史|地理/.test(n)) return{bg:'rgba(255,149,0,.1)',bar:'#ff9500',txt:'#a05c00'};
+  if(n.includes('體育')) return{bg:'rgba(255,59,48,.09)',bar:'#ff3b30',txt:'#cc0000'};
+  if(n.includes('輔導')) return{bg:'rgba(142,142,147,.09)',bar:'#8e8e93',txt:'#636366'};
+  return{bg:'rgba(142,142,147,.07)',bar:'#c7c7cc',txt:'#8e8e93'};
+}
+
+// ═══ STATE ═══
+let S={notif:false,todos:[
+  {id:1,title:'數學A 第三章習題',subject:'數學A',due:'2026-03-15T23:59',done:false},
+  {id:2,title:'英文閱讀寫作作業',subject:'英文',due:'2026-03-18T23:59',done:false},
+],events:[
+  {id:1,title:'校慶補假',date:'2026-03-13',type:'holiday'},
+  {id:2,title:'期中考週',date:'2026-03-15',type:'exam'},
+  {id:3,title:'春假',date:'2026-04-03',type:'holiday'},
+]};
+try{const r=localStorage.getItem('c209');if(r)S=JSON.parse(r);}catch(e){}
+const sv=()=>{try{localStorage.setItem('c209',JSON.stringify(S));}catch(e){}};
+
+// ═══ UTILS ═══
+const col=()=>{const d=new Date().getDay();return(d===0||d===6)?-1:d-1;};
+const nm=()=>{const n=new Date();return n.getHours()*60+n.getMinutes();};
+const pad=n=>String(n).padStart(2,'0');
+function fdue(s){
+  const d=new Date(s);
+  const m=d.getMonth()+1,dy=d.getDate(),h=d.getHours(),mn=d.getMinutes();
+  return `${m}/${dy} (週${DOW_ZH[d.getDay()]}) ${pad(h)}:${pad(mn)}`;
+}
+function fedate(s){
+  const d=new Date(s+'T00:00:00');
+  return `${d.getMonth()+1}/${d.getDate()} (週${DOW_ZH[d.getDay()]})`;
+}
+const urgent=t=>!t.done&&new Date(t.due)-new Date()<2*864e5;
+const uid=()=>Date.now()+Math.random();
+
+let _t2;
+function toast(m){
+  const el=document.getElementById('toast');
+  el.textContent=m;el.classList.add('show');
+  clearTimeout(_t2);_t2=setTimeout(()=>el.classList.remove('show'),2600);
+}
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
+
+// ═══ WEEKLY ═══
+function renderWeekly(){
+  const tc=col();
+  const today=new Date().getDate();
+  let h='<div class="wg-head"></div>';
+  DAY_SHORT.forEach((d,i)=>{
+    if(i===tc){
+      h+=`<div class="wg-head today">${d}<div class="wg-today-dot">${today}</div></div>`;
+    } else {
+      h+=`<div class="wg-head">${d}</div>`;
+    }
+  });
+  PERIODS.forEach((p,pi)=>{
+    if(pi===4) h+=`<div class="wg-lunch">☀️ 午餐 / 午休 · 12:00 – 13:20</div>`;
+    h+=`<div class="wg-time"><div class="wg-pn">${p.n}</div><div class="wg-pt">${p.s}<br>${p.e}</div></div>`;
+    CLASSES[pi].forEach((cls,di)=>{
+      const c=cc(cls);
+      h+=`<div class="wg-cell${di===tc?' today':''}" style="background:${c.bg};color:${c.txt};">
+        <div class="wg-cell-bar" style="background:${c.bar};"></div>
+        <span>${cls}</span>
+      </div>`;
+    });
+  });
+  document.getElementById('weekGrid').innerHTML=h;
+}
+
+// ═══ TODAY ═══
+function renderToday(){
+  const c=col();
+  const now=new Date();
+  const n=nm();
+  let h=`<div class="sec-hd">今天</div>
+  <div class="sec-sub">${now.getMonth()+1} 月 ${now.getDate()} 日 · 星期${DOW_ZH[now.getDay()]}</div>`;
+
+  if(c===-1){
+    h+=`<div class="no-card"><div class="no-emoji">🎉</div><div class="no-txt">今天是週末</div><div class="no-sub">好好休息！</div></div>`;
+    document.getElementById('todayContent').innerHTML=h;
+    return;
+  }
+
+  let ci=-1,ni=-1;
+  PERIODS.forEach((p,i)=>{
+    const st=p.sh*60+p.sm,en=st+50;
+    if(n>=st&&n<=en)ci=i;
+    if(ni===-1&&n<st)ni=i;
+  });
+
+  if(ci!==-1){
+    const p=PERIODS[ci];const cls=CLASSES[ci][c];const co=cc(cls);
+    const st=p.sh*60+p.sm,en=st+50;
+    const pct=Math.min(100,Math.round((n-st)/(en-st)*100));
+    h+=`<div class="now-card">
+      <div class="now-status"><div class="pulse-dot"></div>上課中<span class="now-remain">剩餘 ${en-n} 分鐘</span></div>
+      <div class="now-title">${cls}</div>
+      <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${co.bar};"></div></div>
+      <div class="now-meta">
+        <div class="meta-item">⏰ ${p.s} – ${p.e}</div>
+        <div class="meta-item">· 第 ${p.n} 節</div>
+      </div>
+    </div>`;
+  } else {
+    const lunch=n>=720&&n<800;
+    h+=`<div class="no-card">
+      <div class="no-emoji">${lunch?'🍱':'☕'}</div>
+      <div class="no-txt">${lunch?'午休時間':'目前沒有課'}</div>
+      <div class="no-sub">${ni!==-1?`下一節 ${PERIODS[ni].s} 開始`:'今天課程已結束 🎊'}</div>
+    </div>`;
+  }
+
+  if(ni!==-1){
+    const p=PERIODS[ni];const cls=CLASSES[ni][c];
+    h+=`<div class="next-card">
+      <div class="next-lbl">下一堂 · ${p.s}</div>
+      <div class="next-div"></div>
+      <div><div class="next-sub">${cls}</div><div class="next-t">第 ${p.n} 節 · ${p.s} – ${p.e}</div></div>
+    </div>`;
+  }
+
+  h+=`<div class="sec-hd" style="font-size:18px;padding-top:4px;">今日全部課程</div>
+  <div class="sch-list">`;
+  PERIODS.forEach((p,i)=>{
+    const cls=CLASSES[i][c];const co=cc(cls);
+    const st=p.sh*60+p.sm,en=st+50;
+    const past=n>en,cur=n>=st&&n<=en,nxt=!past&&!cur&&i===ni;
+    h+=`<div class="sch-row">
+      <div class="sch-dot" style="background:${co.bar};"></div>
+      <div class="sch-info">
+        <div class="sch-name${past?' past':''}">${cls}</div>
+        <div class="sch-t">第${p.n}節 · ${p.s} – ${p.e}</div>
+      </div>
+      ${cur?'<div class="badge b-now">進行中</div>':nxt?'<div class="badge b-next">下一堂</div>':past?'<div class="badge b-done">已結束</div>':''}
+    </div>`;
+  });
+  h+='</div>';
+  document.getElementById('todayContent').innerHTML=h;
+}
+
+// ═══ TODO ═══
+function renderTodo(){
+  const now=new Date();
+  let h='';
+  const urg=S.todos.filter(urgent);
+  if(urg.length){
+    h+=`<div class="urgent-banner" style="margin-top:14px;"><div class="urgent-banner-hd">⚠️ 即將到期</div>`;
+    urg.forEach(t=>{h+=`<div class="urgent-item-txt">${t.title} <span style="color:var(--red)">· ${fdue(t.due)}</span></div>`;});
+    h+='</div>';
+  }
+  h+=`<div class="sec-hd" style="padding-top:${urg.length?'12px':'16px'};">待辦事項</div>`;
+  const sorted=[...S.todos.filter(t=>!t.done),...S.todos.filter(t=>t.done)];
+  h+='<div class="todo-list">';
+  if(!sorted.length) h+=`<div style="background:#fff;padding:24px;text-align:center;color:var(--muted);font-size:14px;">✅ 全部完成了！</div>`;
+  sorted.forEach(t=>{
+    const u=urgent(t);
+    h+=`<div class="todo-row">
+      <div class="check-btn${t.done?' done':''}" onclick="toggleTodo(${t.id})"></div>
+      <div class="todo-info">
+        <div class="todo-name${t.done?' done':''}">${t.title}</div>
+        <div class="todo-due${u?' urg':''}">${t.subject?t.subject+' · ':''}${fdue(t.due)}</div>
+      </div>
+      ${u?'<div class="urg-icon">⚠️</div>':''}
+    </div>`;
+  });
+  h+='</div>';
+  h+=`<button class="add-btn" onclick="openM('todoModal')"><div class="add-ic">+</div><div class="add-txt">新增待辦事項</div></button>`;
+  h+=`<div class="sec-hd" style="padding-top:20px;">近期行程</div>`;
+  const evs=S.events.filter(e=>new Date(e.date+'T23:59:59')>=now).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,10);
+  h+='<div class="event-list">';
+  if(!evs.length) h+=`<div style="background:#fff;padding:24px;text-align:center;color:var(--muted);font-size:14px;">沒有近期行程</div>`;
+  const ecols={holiday:'var(--red)',exam:'var(--purple)',ev:'var(--accent)'};
+  const etags={holiday:'假日',exam:'考試',ev:'行程'};
+  const ecls={holiday:'t-hol',exam:'t-exam',ev:'t-ev'};
+  evs.forEach(ev=>{
+    const k=ev.type==='holiday'?'holiday':ev.type==='exam'?'exam':'ev';
+    h+=`<div class="ev-row">
+      <div class="ev-bar" style="background:${ecols[k]};"></div>
+      <div class="ev-info"><div class="ev-name">${ev.title}</div><div class="ev-date">${fedate(ev.date)}</div></div>
+      <div class="ev-tag ${ecls[k]}">${etags[k]}</div>
+    </div>`;
+  });
+  h+='</div>';
+  h+=`<button class="add-btn" onclick="openM('evModal')" style="margin-top:8px;"><div class="add-ic">+</div><div class="add-txt">新增行程</div></button>`;
+  document.getElementById('todoContent').innerHTML=h;
+}
+
+function toggleTodo(id){
+  const t=S.todos.find(x=>x.id===id);
+  if(t){t.done=!t.done;sv();renderTodo();toast(t.done?'已完成 ✓':'已取消');}
+}
+function saveTodo(){
+  const title=document.getElementById('tTitle').value.trim();
+  const subj=document.getElementById('tSubj').value.trim();
+  const due=document.getElementById('tDue').value;
+  if(!title||!due){toast('請填寫標題和截止時間');return;}
+  S.todos.push({id:uid(),title,subject:subj,due,done:false});
+  sv();closeM('todoModal');renderTodo();
+  ['tTitle','tSubj','tDue'].forEach(id=>document.getElementById(id).value='');
+  toast('已新增 ✓');
+}
+function saveEvent(){
+  const title=document.getElementById('eTitle').value.trim();
+  const date=document.getElementById('eDate').value;
+  const type=document.getElementById('eType').value;
+  if(!title||!date){toast('請填寫標題和日期');return;}
+  S.events.push({id:uid(),title,date,type});
+  sv();closeM('evModal');renderTodo();
+  ['eTitle','eDate'].forEach(id=>document.getElementById(id).value='');
+  toast('已新增行程 ✓');
+}
+
+// ═══ NOTIFICATIONS ═══
+let _nt=[];
+async function enableNotif(){
+  if(!('Notification' in window)){toast('此瀏覽器不支援通知');return false;}
+  return(await Notification.requestPermission())==='granted';
+}
+function schedNotifs(){
+  _nt.forEach(t=>clearTimeout(t));_nt=[];
+  if(!S.notif)return;
+  const c=col();if(c===-1)return;
+  const now=new Date(),ms=now.getTime();
+  let cnt=0;
+  PERIODS.forEach(p=>{
+    const d=new Date(now.getFullYear(),now.getMonth(),now.getDate(),p.sh,p.sm-5,0);
+    const delay=d-ms;
+    if(delay>0){
+      _nt.push(setTimeout(()=>new Notification('⏰ 即將上課',{body:`第${p.n}節 ${p.s} · ${CLASSES[PERIODS.indexOf(p)][c]}`}),delay));
+      cnt++;
+    }
+  });
+  if(cnt) toast(`已設定 ${cnt} 個提醒 🔔`);
+}
+const ntgl=document.getElementById('notifToggle');
+if(S.notif)ntgl.classList.add('on');
+ntgl.addEventListener('click',async()=>{
+  if(!S.notif){
+    if(await enableNotif()){S.notif=true;ntgl.classList.add('on');sv();schedNotifs();}
+    else toast('請允許通知權限');
+  } else {
+    S.notif=false;ntgl.classList.remove('on');sv();
+    _nt.forEach(t=>clearTimeout(t));_nt=[];toast('已關閉提醒');
+  }
+});
+document.getElementById('notifBtn').addEventListener('click',()=>openM('notifModal'));
+
+// ═══ ROUTING ═══
+const VIEWS={
+  weekly:{el:'weekly-view',render:renderWeekly,title:'課程表'},
+  today:{el:'today-view',render:renderToday,title:'今天'},
+  todo:{el:'todo-view',render:renderTodo,title:'待辦 & 行程'},
+};
+let cur='weekly';
+
+function goTo(id){
+  if(id===cur)return;
+  cur=id;
+  const v=VIEWS[id];
+  document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
+  document.getElementById(v.el).classList.add('active');
+  document.getElementById('hTitle').textContent=v.title;
+  document.querySelectorAll('.seg-btn,[data-v]').forEach(b=>b.classList.toggle('active',b.dataset.v===id));
+  v.render();
+}
+document.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.v)));
+
+// ═══ INIT ═══
+renderWeekly();
+if(S.notif)schedNotifs();
+setInterval(()=>{if(cur==='today')renderToday();},30000);
+</script>
+
+</body>
+</html>
