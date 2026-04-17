@@ -9,13 +9,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="課程表">
 <meta name="theme-color" content="#f5f5f7">
-<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi6Kqy56iL6KGoIiwic2hvcnRfbmFtZSI6IuiqsueoiyIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZjVmNWY3IiwidGhlbWVfY29sb3IiOiIjZjVmNWY3IiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmclMjB4bWxucyUzRCdodHRwJTNBJTJGJTJGd3d3LnczLm9yZyUyRjIwMDAlMkZzdmcnJTIwdmlld0JveCUzRCcwJTIwMCUyMDEwMCUyMDEwMCclM0UlM0NyZWN0JTIwd2lkdGglM0QnMTAwJyUyMGhlaWdodCUzRCcxMDAnJTIwZmlsbCUzRCclMjMwMDY2Y2MnJTIwcnglM0QnMjAnJTJGJTNFJTNDdGV4dCUyMHglM0QnNTAlMjUnJTIweSUzRCc1NSUyNSclMjBmb250LXNpemUlM0QnNDgnJTIwZmlsbCUzRCclMjNmZmYnJTIwdGV4dC1hbmNob3IlM0QnbWlkZGxlJyUyMGZvbnQtd2VpZ2h0JTNEJ2JvbGQnJTNF6KqyJTNDJTJGdGV4dCUzRSUzQyUyRnN2ZyUzRSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 
-/* ══════════ LIGHT MODE ══════════ */
 :root{
 –bg:#f5f5f7;
 –card:#ffffff;
@@ -39,7 +37,6 @@
 –glass-shadow:rgba(0,0,0,0.08);
 }
 
-/* ══════════ DARK MODE ══════════ */
 :root.dark{
 –bg:#000000;
 –card:#1c1c1e;
@@ -66,7 +63,6 @@ html,body{height:100%;overflow:hidden;background:var(–bg);font-family:‘Noto 
 .safe-top{height:env(safe-area-inset-top,44px);background:var(–bg);}
 .safe-bot{height:env(safe-area-inset-bottom,20px);background:var(–bg);}
 
-/* ── HEADER ── */
 header{
 height:var(–header-h);padding:0 16px;
 display:flex;align-items:center;justify-content:space-between;
@@ -87,11 +83,9 @@ transition:background .15s,transform .15s;
 .h-btn:active{background:var(–sep);transform:scale(0.94);}
 .h-btn svg{width:18px;height:18px;fill:var(–accent);}
 
-/* ── VIEWS ── */
 .view{display:none;flex:1;overflow:hidden;flex-direction:column;}
 .view.active{display:flex;}
 
-/* ══════════ WEEKLY ══════════ */
 #weekly-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;}
 .week-grid{
 display:grid;
@@ -115,14 +109,13 @@ font-size:11px;font-weight:700;margin-top:3px;
 
 .wg-time{
 display:flex;flex-direction:column;align-items:center;justify-content:center;
-padding:1px 0;position:relative;
+padding:4px 2px;
 }
 .wg-time.today{background:var(–sep2);border-radius:8px;}
 .wg-pn{font-size:13px;font-weight:700;color:var(–text2);}
 .wg-time.today .wg-pn{color:var(–accent);}
 .wg-pt{font-size:8px;color:var(–muted);line-height:1.4;text-align:center;margin-top:1px;}
 
-/* ═══ LIQUID GLASS EFFECT ═══ */
 .wg-cell{
 min-height:72px;border-radius:14px;
 display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -186,7 +179,6 @@ padding:5px;margin:1px 0;
 font-size:10.5px;color:var(–muted);font-weight:500;letter-spacing:.2px;
 }
 
-/* ══════════ TODAY ══════════ */
 #today-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 16px 16px;}
 
 .sec-hd{font-size:22px;font-weight:700;letter-spacing:-.3px;padding:16px 0 4px;}
@@ -238,7 +230,6 @@ border:1px solid var(–sep);
 .b-next{background:rgba(230,119,0,.1);color:var(–orange);}
 .b-done{background:var(–sep2);color:var(–muted);}
 
-/* ══════════ TODO ══════════ */
 #todo-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 16px 16px;}
 
 .urgent-banner{
@@ -291,7 +282,6 @@ transition:all .15s;
 .add-ic{font-size:18px;font-weight:300;}
 .add-txt{font-family:‘Noto Sans TC’,sans-serif;}
 
-/* ══════════ SETTINGS ══════════ */
 #settings-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:0 16px 16px;}
 
 .settings-section{margin-bottom:24px;}
@@ -335,6 +325,7 @@ transition:max-height .3s ease, padding .3s ease;
 max-height:0;
 padding:0 16px;
 }
+
 .period-edit-row{
 background:var(–sep2);border-radius:10px;padding:10px 12px;margin-bottom:8px;
 }
@@ -395,7 +386,6 @@ cursor:pointer;transition:all .15s;
 }
 .icon-upload-btn:active{background:var(–sep2);}
 
-/* ══════════ TAB BAR ══════════ */
 .tab-bar{
 height:var(–tab-h);
 background:var(–glass-bg);
@@ -421,7 +411,6 @@ transition:color .2s;letter-spacing:.3px;
 }
 .tab.active .tab-lbl{color:var(–accent);}
 
-/* ══════════ MODAL ══════════ */
 .modal{
 display:none;position:fixed;inset:0;z-index:1000;
 background:rgba(0,0,0,0.5);
@@ -464,7 +453,6 @@ cursor:pointer;transition:all .15s;
 .modal-btn.save{background:var(–accent);color:#fff;}
 .modal-btn.save:active{transform:scale(0.98);}
 
-/* ══════════ TOAST ══════════ */
 .toast{
 position:fixed;bottom:calc(var(–tab-h) + 20px);left:50%;
 transform:translateX(-50%) translateY(100px);
@@ -483,7 +471,6 @@ backdrop-filter:blur(20px);
 opacity:1;transform:translateX(-50%) translateY(0);
 }
 
-/* ══════════ TOGGLE ══════════ */
 .notif-toggle{
 width:48px;height:28px;border-radius:14px;
 background:var(–sep);position:relative;cursor:pointer;
@@ -706,7 +693,8 @@ transition:transform .3s;
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══ DATA ═══
+console.log('Script starting...');
+
 const DOW_ZH=['日','一','二','三','四','五','六'];
 const DOW=['SUN','MON','TUE','WED','THU','FRI'];
 
@@ -752,7 +740,6 @@ S={...S,...parsed};
 if(!S.periods)S.periods=JSON.parse(JSON.stringify(DEFAULT_PERIODS));
 if(!S.classes)S.classes=JSON.parse(JSON.stringify(DEFAULT_CLASSES));
 if(!S.notes){
-// Initialize notes: 8 periods x 5 days
 S.notes=[];
 for(let p=0;p<8;p++){
 S.notes[p]=[];
@@ -784,11 +771,11 @@ S.notes[p][d]='';
 }
 }
 }
+console.log('Data loaded:', S);
 }
 function sv(){localStorage.setItem('scheduleData',JSON.stringify(S));}
 ld();
 
-// ═══ HELPERS ═══
 let uid_c=Date.now();
 function uid(){return uid_c++;}
 function col(){const d=new Date().getDay();return d===0||d===6?-1:d-1;}
@@ -852,13 +839,11 @@ setTimeout(()=>t.classList.remove('show'),2000);
 function openM(id){document.getElementById(id).classList.add('show');}
 function closeM(id){document.getElementById(id).classList.remove('show');}
 
-// ═══ WEEKLY ═══
 function renderWeekly(){
-const today=new Date().getDay();
+console.log('renderWeekly called');
 const c=col();
 let h='';
 
-// Headers
 h+='<div class="wg-head"></div>';
 for(let i=0;i<5;i++){
 const isToday=(i===c);
@@ -868,7 +853,6 @@ ${isToday?`<div class="wg-today-dot">${new Date().getDate()}</div>`:''}
 </div>`;
 }
 
-// Periods
 S.periods.forEach((p,pi)=>{
 h+=`<div class="wg-time${c!==-1?' today':''}">
 <div class="wg-pn">${p.n}</div>
@@ -894,9 +878,9 @@ h+=`<div class="wg-lunch">12:00 – 13:00 午休</div>`;
 });
 
 document.getElementById('weekGrid').innerHTML=h;
+console.log('renderWeekly complete');
 }
 
-// ═══ TODAY ═══
 function renderToday(){
 const now=new Date();
 const c=col();
@@ -966,7 +950,6 @@ h+='</div>';
 document.getElementById('todayContent').innerHTML=h;
 }
 
-// ═══ TODO ═══
 function renderTodo(){
 const now=new Date();
 let h='';
@@ -1040,7 +1023,6 @@ sv();closeM('evModal');renderTodo();
 toast('已新增行程');
 }
 
-// ═══ SETTINGS ═══
 function renderTimeEdit(){
 let h='';
 S.periods.forEach((p,i)=>{
@@ -1057,7 +1039,6 @@ document.getElementById('timeEditSection').innerHTML=h;
 function renderSettings(){
 let h='';
 
-// 按天數編輯，只展開第一天
 for(let d=0;d<5;d++){
 const isFirst=d===0;
 h+=`<div class="day-edit-card${isFirst?'':' collapsed'}" data-day="${d}">
@@ -1098,7 +1079,6 @@ card.classList.toggle(‘collapsed’);
 }
 
 function saveSettings(){
-// Save time edits
 document.querySelectorAll(’[data-field=“start”]’).forEach(input=>{
 const pi=parseInt(input.dataset.period);
 const val=input.value;
@@ -1116,14 +1096,12 @@ S.periods[pi].eh=h;
 S.periods[pi].em=m;
 });
 
-// Save class names
 document.querySelectorAll(’.period-edit-input’).forEach(input=>{
 const pi=parseInt(input.dataset.period);
 const d=parseInt(input.dataset.day);
 S.classes[pi][d]=input.value.trim()||’’;
 });
 
-// Save notes
 document.querySelectorAll(’.period-note-textarea’).forEach(textarea=>{
 const pi=parseInt(textarea.dataset.period);
 const d=parseInt(textarea.dataset.day);
@@ -1136,7 +1114,6 @@ renderToday();
 toast(‘設定已儲存’);
 }
 
-// ═══ EXPORT/IMPORT ═══
 function exportData(){
 const data={
 version:‘1.0’,
@@ -1182,7 +1159,6 @@ console.error(err);
 e.target.value=’’;
 });
 
-// ═══ ICON UPLOAD ═══
 document.getElementById(‘iconInput’).addEventListener(‘change’,async(e)=>{
 const file=e.target.files[0];
 if(!file)return;
@@ -1206,7 +1182,6 @@ preview.innerHTML=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"
 }
 }
 
-// ═══ NOTIFICATIONS ═══
 let _nt=[];
 let _todoTimers=[];
 
@@ -1262,7 +1237,6 @@ _nt.forEach(t=>clearTimeout(t));_nt=[];toast(‘已關閉提醒’);
 });
 document.getElementById(‘notifBtn’).addEventListener(‘click’,()=>openM(‘notifModal’));
 
-// ═══ THEME TOGGLE ═══
 function toggleTheme(){
 S.darkMode=!S.darkMode;
 applyTheme();
@@ -1280,14 +1254,12 @@ toggle.classList.add(‘on’);
 root.classList.remove(‘dark’);
 toggle.classList.remove(‘on’);
 }
-// Refresh views to update colors
 if(cur===‘weekly’)renderWeekly();
 if(cur===‘today’)renderToday();
 }
 
 document.getElementById(‘themeToggle’).addEventListener(‘click’,toggleTheme);
 
-// ═══ ROUTING ═══
 const VIEWS={
 weekly:{el:‘weekly-view’,render:renderWeekly,title:‘課程表’},
 today:{el:‘today-view’,render:renderToday,title:‘今天’},
@@ -1308,12 +1280,13 @@ v.render();
 }
 document.querySelectorAll(’[data-v]’).forEach(b=>b.addEventListener(‘click’,()=>goTo(b.dataset.v)));
 
-// ═══ INIT ═══
+console.log(‘Initializing…’);
 applyTheme();
 updateIcon();
 renderWeekly();
 if(S.notif){schedNotifs();schedTodoReminders();}
 setInterval(()=>{if(cur===‘today’)renderToday();},30000);
+console.log(‘Initialization complete’);
 </script>
 
 </body>
