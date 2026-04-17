@@ -3,413 +3,65 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>課程表</title>
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>維修中</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-:root{
---bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--text2:#666;--sep:#ddd;
---accent:#0066cc;--green:#30d158;--red:#ff453a;
-}
-:root.dark{
---bg:#000;--card:#1c1c1e;--text:#f5f5f7;--text2:#999;--sep:#333;
---accent:#0a84ff;--green:#32d74b;--red:#ff3b30;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 body{
 font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-background:var(--bg);color:var(--text);
-height:100dvh;overflow:hidden;display:flex;flex-direction:column;
-transition:background .3s,color .3s;
+background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
 }
-.header{
-background:var(--card);padding:12px 16px;border-bottom:1px solid var(--sep);
-display:flex;align-items:center;justify-content:space-between;
+.container{
+background:rgba(255,255,255,0.95);
+border-radius:20px;
+padding:60px 40px;
+text-align:center;
+max-width:500px;
+width:100%;
+box-shadow:0 20px 60px rgba(0,0,0,0.3);
 }
-.title{font-size:20px;font-weight:700;}
-.btn{
-width:32px;height:32px;border-radius:16px;background:var(--sep);
-border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+.icon{
+font-size:80px;
+margin-bottom:20px;
+animation:float 3s ease-in-out infinite;
 }
-.view{display:none;flex:1;overflow:auto;-webkit-overflow-scrolling:touch;}
-.view.active{display:block;}
-.content{padding:16px;}
-
-/* Grid */
-.grid{
-display:grid;grid-template-columns:40px repeat(5,1fr);gap:4px;
-background:var(–card);border-radius:12px;padding:10px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-10px);}
 }
-.cell{
-min-height:60px;border-radius:8px;padding:8px 4px;
-font-size:11px;text-align:center;
-display:flex;align-items:center;justify-content:center;flex-direction:column;
+h1{
+font-size:32px;
+color:#1d1d1f;
+margin-bottom:16px;
+font-weight:700;
 }
-.time{font-size:10px;color:var(–text2);}
-.head{font-weight:700;color:var(–accent);font-size:10px;}
-
-/* Tabs */
-.tabs{
-background:var(–card);border-top:1px solid var(–sep);
-display:flex;padding:env(safe-area-inset-bottom,0) 0 8px;
+p{
+font-size:16px;
+color:#666;
+line-height:1.6;
+margin-bottom:12px;
 }
-.tab{
-flex:1;display:flex;flex-direction:column;align-items:center;
-padding:8px;cursor:pointer;gap:4px;
-}
-.tab-icon{font-size:20px;}
-.tab-name{font-size:10px;color:var(–text2);}
-.tab.active .tab-icon{color:var(–accent);}
-.tab.active .tab-name{color:var(–accent);font-weight:600;}
-
-/* Cards */
-.card{
-background:var(–card);border-radius:12px;padding:14px;
-margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
-.card-title{font-size:16px;font-weight:700;margin-bottom:8px;}
-.input{
-width:100%;padding:10px;border:1px solid var(–sep);
-border-radius:8px;background:var(–bg);margin:6px 0;
-font-size:14px;font-family:inherit;
-}
-.btn-primary{
-width:100%;padding:12px;background:var(–accent);color:#fff;
-border:none;border-radius:8px;font-size:14px;font-weight:600;
-margin-top:8px;cursor:pointer;
-}
-
-/* Todo */
-.todo-item{
-display:flex;align-items:center;gap:12px;padding:10px;
-background:var(–card);margin-bottom:8px;border-radius:8px;
-}
-.check{
-width:20px;height:20px;border:2px solid var(–sep);
-border-radius:10px;cursor:pointer;
-}
-.check.done{background:var(–green);border-color:var(–green);}
-.todo-text{flex:1;font-size:14px;}
-.todo-text.done{color:var(–text2);text-decoration:line-through;}
-
-/* Toggle */
-.toggle{
-width:44px;height:26px;border-radius:13px;background:var(–sep);
-position:relative;cursor:pointer;transition:background .3s;
-}
-.toggle.on{background:var(–green);}
-.toggle::after{
-content:’’;position:absolute;width:22px;height:22px;
-border-radius:11px;background:#fff;top:2px;left:2px;
-transition:transform .3s;
-}
-.toggle.on::after{transform:translateX(18px);}
-
-.debug{
-position:fixed;bottom:0;left:0;right:0;
-background:rgba(0,0,0,0.95);color:#0f0;
-padding:6px 8px;font-size:10px;font-family:monospace;
-max-height:80px;overflow:auto;display:none;
+.time{
+font-size:14px;
+color:#999;
+margin-top:24px;
 }
 </style>
-
 </head>
 <body>
 
-<div class="header">
-<div class="title" id="pageTitle">課程表</div>
-<button class="btn" id="themeBtn">🌙</button>
+<div class="container">
+<div class="icon">!</div>
+<h1>系統維修中</h1>
+<p>我們正在進行系統升級</p>
+<p>預計很快就會恢復正常</p>
+<div class="time">感謝您的耐心等候</div>
 </div>
-
-<div class="view active" id="viewWeek">
-<div class="content"><div class="grid" id="gridWeek"></div></div>
-</div>
-
-<div class="view" id="viewToday">
-<div class="content" id="contentToday"></div>
-</div>
-
-<div class="view" id="viewTodo">
-<div class="content" id="contentTodo"></div>
-</div>
-
-<div class="view" id="viewSettings">
-<div class="content" id="contentSettings"></div>
-</div>
-
-<div class="tabs">
-<div class="tab active" data-view="viewWeek">
-<div class="tab-icon">📅</div>
-<div class="tab-name">課表</div>
-</div>
-<div class="tab" data-view="viewToday">
-<div class="tab-icon">⏰</div>
-<div class="tab-name">今天</div>
-</div>
-<div class="tab" data-view="viewTodo">
-<div class="tab-icon">✓</div>
-<div class="tab-name">待辦</div>
-</div>
-<div class="tab" data-view="viewSettings">
-<div class="tab-icon">⚙</div>
-<div class="tab-name">設定</div>
-</div>
-</div>
-
-<div class="debug" id="debug"></div>
-
-<script>
-// Debug
-function log(msg){
-console.log(msg);
-const d=document.getElementById('debug');
-if(d){d.innerHTML+=msg+'<br>';d.scrollTop=d.scrollHeight;}
-}
-log('開始初始化...');
-
-// Data
-const DAYS=['一','二','三','四','五'];
-const PERIODS=[
-{n:1,s:'08:10',e:'09:00'},{n:2,s:'09:10',e:'10:00'},
-{n:3,s:'10:10',e:'11:00'},{n:4,s:'11:10',e:'12:00'},
-{n:5,s:'13:10',e:'14:00'},{n:6,s:'14:10',e:'15:00'},
-{n:7,s:'15:10',e:'16:00'},{n:8,s:'16:10',e:'17:00'}
-];
-
-const DEFAULT_CLASSES=[
-['國文','英文','數學','歷史','生物'],
-['數學','體育','國文','地理','化學'],
-['英文','數學','公民','物理','國文'],
-['歷史','化學','英文','數學','體育'],
-['生物','地理','數學','國文','英文'],
-['數學','國文','體育','英文','物理'],
-['公民','英文','生物','化學','數學'],
-['體育','數學','國文','英文','地理']
-];
-
-const COLORS={
-'國文':'#ff9f0a','英文':'#0a84ff','數學':'#ff453a',
-'物理':'#bf5af2','化學':'#30d158','生物':'#5ac8fa',
-'歷史':'#ffd60a','地理':'#ff375f','公民':'#64d2ff','體育':'#32d74b'
-};
-
-let S={
-dark:false,
-classes:JSON.parse(JSON.stringify(DEFAULT_CLASSES)),
-todos:[],
-};
-
-// Storage
-function load(){
-try{
-const d=localStorage.getItem('scheduleData');
-if(d){
-const p=JSON.parse(d);
-S={...S,...p};
-}
-log('✓ 資料載入完成');
-}catch(e){
-log('⚠ 載入失敗: '+e.message);
-}
-}
-
-function save(){
-try{
-localStorage.setItem('scheduleData',JSON.stringify(S));
-}catch(e){
-log('⚠ 儲存失敗');
-}
-}
-
-// Render Week
-function renderWeek(){
-log('渲染週課表...');
-let h='<div class="cell"></div>';
-for(let i=0;i<5;i++){
-h+=`<div class="cell head">${DAYS[i]}</div>`;
-}
-PERIODS.forEach((p,pi)=>{
-h+=`<div class="cell time">${p.n}<br>${p.s}</div>`;
-for(let d=0;d<5;d++){
-const c=S.classes[pi][d]||'';
-const col=COLORS[c]||'#666';
-h+=`<div class="cell" style="background:${col}20;color:${col};font-weight:600;">${c}</div>`;
-}
-});
-document.getElementById('gridWeek').innerHTML=h;
-log('✓ 週課表完成');
-}
-
-// Render Today
-function renderToday(){
-const now=new Date();
-const day=now.getDay();
-const h=now.getHours()*60+now.getMinutes();
-let html=`<div class="card">
-<div class="card-title">${now.getMonth()+1}月${now.getDate()}日 · 星期${['日','一','二','三','四','五','六'][day]}</div>
-</div>`;
-
-if(day===0||day===6){
-html+=`<div class="card" style="text-align:center;padding:40px;">
-<div style="font-size:18px;font-weight:700;">今天是週末</div>
-<div style="color:var(--text2);margin-top:8px;">好好休息！</div>
-</div>`;
-}else{
-const d=day-1;
-PERIODS.forEach((p,i)=>{
-const c=S.classes[i][d];
-const col=COLORS[c]||'#666';
-html+=`<div class="card" style="border-left:3px solid ${col};">
-<div style="font-size:14px;font-weight:600;">${c}</div>
-<div style="font-size:12px;color:var(--text2);margin-top:4px;">第${p.n}節 · ${p.s}-${p.e}</div>
-</div>`;
-});
-}
-document.getElementById('contentToday').innerHTML=html;
-}
-
-// Render Todo
-function renderTodo(){
-let html=`<div class="card">
-<div class="card-title">待辦事項</div>
-<input type="text" class="input" id="todoInput" placeholder="新增待辦事項...">
-<button class="btn-primary" onclick="addTodo()">新增</button>
-</div>`;
-
-if(S.todos.length===0){
-html+=`<div class="card" style="text-align:center;color:var(--text2);">沒有待辦事項</div>`;
-}else{
-html+=`<div style="background:var(--card);border-radius:12px;overflow:hidden;">`;
-S.todos.forEach((t,i)=>{
-html+=`<div class="todo-item">
-<div class="check ${t.done?'done':''}" onclick="toggleTodo(${i})"></div>
-<div class="todo-text ${t.done?'done':''}">${t.text}</div>
-</div>`;
-});
-html+=`</div>`;
-}
-document.getElementById('contentTodo').innerHTML=html;
-}
-
-function addTodo(){
-const input=document.getElementById('todoInput');
-const text=input.value.trim();
-if(!text)return;
-S.todos.push({text,done:false});
-save();
-renderTodo();
-}
-
-function toggleTodo(i){
-S.todos[i].done=!S.todos[i].done;
-save();
-renderTodo();
-}
-
-// Render Settings
-function renderSettings(){
-let html=`<div class="card">
-<div class="card-title">外觀</div>
-<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;">
-<div>深色模式</div>
-<div class="toggle ${S.dark?'on':''}" onclick="toggleDark()"></div>
-</div>
-</div>
-
-<div class="card">
-<div class="card-title">課表編輯</div>
-</div>`;
-
-DAYS.forEach((day,d)=>{
-html+=`<div class="card">
-<div style="font-weight:600;margin-bottom:12px;">星期${day}</div>`;
-PERIODS.forEach((p,pi)=>{
-const val=S.classes[pi][d]||'';
-html+=`<input type="text" class="input" 
-value="${val}" 
-onchange="updateClass(${pi},${d},this.value)"
-placeholder="第${p.n}節 ${p.s}-${p.e}">`;
-});
-html+=`</div>`;
-});
-
-html+=`<button class="btn-primary" onclick="saveClasses()">儲存課表</button>`;
-document.getElementById('contentSettings').innerHTML=html;
-}
-
-function updateClass(p,d,val){
-S.classes[p][d]=val.trim();
-}
-
-function saveClasses(){
-save();
-renderWeek();
-alert('已儲存！');
-}
-
-function toggleDark(){
-S.dark=!S.dark;
-save();
-applyTheme();
-renderSettings();
-}
-
-function applyTheme(){
-if(S.dark){
-document.documentElement.classList.add('dark');
-document.getElementById('themeBtn').textContent='☀';
-}else{
-document.documentElement.classList.remove('dark');
-document.getElementById('themeBtn').textContent='🌙';
-}
-}
-
-// Navigation
-let currentView='viewWeek';
-function switchView(id){
-document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-document.querySelector(`[data-view="${id}"]`).classList.add('active');
-
-const titles={
-viewWeek:'課程表',
-viewToday:'今天',
-viewTodo:'待辦事項',
-viewSettings:'設定'
-};
-document.getElementById('pageTitle').textContent=titles[id];
-
-if(id==='viewToday')renderToday();
-else if(id==='viewTodo')renderTodo();
-else if(id==='viewSettings')renderSettings();
-
-currentView=id;
-}
-
-// Init
-try{
-log('載入資料...');
-load();
-log('應用主題...');
-applyTheme();
-log('渲染頁面...');
-renderWeek();
-log('✓ 初始化完成！');
-
-// Events
-document.querySelectorAll('.tab').forEach(tab=>{
-tab.addEventListener('click',()=>switchView(tab.dataset.view));
-});
-
-document.getElementById('themeBtn').addEventListener('click',toggleDark);
-
-}catch(e){
-log('❌ 錯誤: '+e.message);
-alert('初始化失敗: '+e.message);
-}
-</script>
 
 </body>
 </html>
