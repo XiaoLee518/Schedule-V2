@@ -870,8 +870,7 @@ ${isToday?`<div class="wg-today-dot">${new Date().getDate()}</div>`:''}
 
 // Periods
 S.periods.forEach((p,pi)=>{
-const isToday=(col()!==-1);
-h+=`<div class="wg-time${isToday&&c!==-1&&pi<8?' today':''}">
+h+=`<div class="wg-time${c!==-1?' today':''}">
 <div class="wg-pn">${p.n}</div>
 <div class="wg-pt">${p.s}<br>${p.e}</div>
 </div>`;
