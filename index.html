@@ -488,6 +488,10 @@ transition:transform .3s;
 </head>
 
 <body>
+<div id="debug-panel" style="position:fixed;bottom:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;padding:8px;font-size:11px;font-family:monospace;max-height:120px;overflow-y:auto;z-index:99999;">
+<div id="debug-log"></div>
+</div>
+<div id="error-display" style="display:none;position:fixed;top:0;left:0;right:0;background:#ff3b30;color:#fff;padding:12px;text-align:center;z-index:9999;font-size:13px;"></div>
 <div id="app">
 <div class="safe-top"></div>
 
@@ -691,7 +695,39 @@ transition:transform .3s;
 <div class="toast" id="toast"></div>
 
 <script>
-console.log('Script starting...');
+'use strict';
+
+// Debug logging
+const debugPanel = document.getElementById('debug-panel');
+const debugLog = document.getElementById('debug-log');
+function log(msg) {
+  log(msg);
+  if (debugLog) {
+    debugLog.innerHTML += msg + '<br>';
+    debugPanel.scrollTop = debugPanel.scrollHeight;
+  }
+}
+
+// Error handling
+function showError(msg) {
+  console.error('ERROR:', msg);
+  log('❌ ERROR: ' + msg);
+  const errorDiv = document.getElementById('error-display');
+  if (errorDiv) {
+    errorDiv.textContent = '錯誤: ' + msg + ' (請按 F12 查看詳細資訊)';
+    errorDiv.style.display = 'block';
+  }
+}
+
+window.addEventListener('error', function(e) {
+  showError(e.message + ' at ' + e.filename + ':' + e.lineno);
+});
+
+log('=== 課程表應用啟動 ===');
+log('URL: ' + window.location.href);
+
+try {
+log('✓ Script starting...');
 
 const DOW_ZH=['日','一','二','三','四','五','六'];
 const DOW=['SUN','MON','TUE','WED','THU','FRI'];
@@ -730,8 +766,20 @@ notes:null,
 };
 
 function ld(){
+log('✓ 開始載入資料...');
 try{
+// Check localStorage availability
+try {
+  localStorage.setItem('test', 'test');
+  localStorage.removeItem('test');
+  log('✓ localStorage 可用');
+} catch (e) {
+  log('⚠ localStorage 不可用: ' + e.message);
+  showError('瀏覽器儲存功能不可用');
+}
+
 const d=localStorage.getItem('scheduleData');
+log('載入資料: ' + (d ? '找到儲存的資料' : '使用預設資料'));
 if(d){
 const parsed=JSON.parse(d);
 S={...S,...parsed};
@@ -758,6 +806,7 @@ S.notes[p][d]='';
 }
 }
 }catch(e){
+log('❌ Load error: ' + e.message);
 console.error('Load error:',e);
 S.periods=JSON.parse(JSON.stringify(DEFAULT_PERIODS));
 S.classes=JSON.parse(JSON.stringify(DEFAULT_CLASSES));
@@ -769,10 +818,12 @@ S.notes[p][d]='';
 }
 }
 }
-console.log('Data loaded:', S);
+log('✓ Data loaded, periods: ' + S.periods.length + ', classes: ' + S.classes.length);
 }
 function sv(){localStorage.setItem('scheduleData',JSON.stringify(S));}
+log('✓ 執行 ld()...');
 ld();
+log('✓ ld() 完成');
 
 let uid_c=Date.now();
 function uid(){return uid_c++;}
@@ -838,7 +889,7 @@ function openM(id){document.getElementById(id).classList.add('show');}
 function closeM(id){document.getElementById(id).classList.remove('show');}
 
 function renderWeekly(){
-console.log('renderWeekly called');
+log('✓ renderWeekly called');
 const c=col();
 let h='';
 
@@ -876,7 +927,7 @@ h+=`<div class="wg-lunch">12:00 – 13:00 午休</div>`;
 });
 
 document.getElementById('weekGrid').innerHTML=h;
-console.log('renderWeekly complete');
+log('✓ renderWeekly complete, rows: ' + S.periods.length);
 }
 
 function renderToday(){
@@ -1278,13 +1329,25 @@ v.render();
 }
 document.querySelectorAll(’[data-v]’).forEach(b=>b.addEventListener(‘click’,()=>goTo(b.dataset.v)));
 
-console.log(‘Initializing…’);
+log(‘Initializing…’);
+log(‘✓ 應用主題…’);
 applyTheme();
+log(‘✓ 更新圖示…’);
 updateIcon();
+log(‘✓ 渲染週課表…’);
 renderWeekly();
+log(‘✓ 設定提醒…’);
 if(S.notif){schedNotifs();schedTodoReminders();}
 setInterval(()=>{if(cur===‘today’)renderToday();},30000);
-console.log(‘Initialization complete’);
+log(‘✓ Initialization complete’);
+log(’=== 應用啟動成功 ===’);
+
+} catch (error) {
+console.error(‘初始化錯誤:’, error);
+showError(’初始化失敗: ’ + error.message);
+// 嘗試顯示基本界面
+document.getElementById(‘app’).innerHTML = `<div style="padding:20px;text-align:center;"> <h1>課程表載入失敗</h1> <p style="color:#dc3545;margin:10px 0;">${error.message}</p> <p style="color:#86868b;font-size:14px;">請檢查瀏覽器控制台 (F12) 查看詳細錯誤</p> <button onclick="location.reload()" style="margin-top:20px;padding:10px 20px;background:#0066cc;color:#fff;border:none;border-radius:8px;cursor:pointer;">重新載入</button> </div>`;
+}
 </script>
 
 </body>
